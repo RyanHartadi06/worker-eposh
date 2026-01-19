@@ -10,6 +10,11 @@ RABBITMQ_USER = os.getenv('RABBITMQ_USER', 'guest')
 RABBITMQ_PASSWORD = os.getenv('RABBITMQ_PASSWORD', 'guest')
 QUEUE_NAME = 'hikvision_queue'
 
+# Pub/Sub Queues
+QUEUE_CREATE_PERSON = 'hikvision_create_person'
+QUEUE_UPDATE_KIB = 'hikvision_update_kib'
+QUEUE_ASSIGN_PRIVILEGE = 'hikvision_assign_privilege'
+
 HIKVISION_BASE_URL = os.getenv('HIKVISION_BASE_URL', 'https://192.168.100.15')
 HIKVISION_AK = os.getenv('HIKVISION_AK', 'your_api_key_here')
 HIKVISION_SIGNATURE = os.getenv('HIKVISION_SIGNATURE', 'your_signature_here')
