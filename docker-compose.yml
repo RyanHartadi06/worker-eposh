@@ -1,0 +1,66 @@
+services:
+  # RabbitMQ Service
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: hikvision-rabbitmq
+    ports:
+      - "5672:5672"    # AMQP port
+      - "15672:15672"  # Management UI
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-guest}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-guest}
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - hikvision-network
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+
+  # Flask App (OPTIONAL - Only needed if NOT using Laravel integration)
+  # Comment out this service if you're using Laravel to publish messages
+  # flask-app:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile.flask
+  #   container_name: hikvision-flask
+  #   ports:
+  #     - "5000:5000"
+  #   environment:
+  #     - RABBITMQ_HOST=rabbitmq
+  #     - RABBITMQ_PORT=5672
+  #     - RABBITMQ_USER=${RABBITMQ_USER:-guest}
+  #     - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD:-guest}
+  #   depends_on:
+  #     rabbitmq:
+  #       condition: service_healthy
+  #   restart: unless-stopped
+  #   networks:
+  #     - hikvision-network
+
+  # Worker Pub/Sub (3 workers in 1 container)
+  worker-pubsub:
+    build:
+      context: .
+      dockerfile: Dockerfile.worker
+    container_name: hikvision-worker-pubsub
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USER=${RABBITMQ_USER:-guest}
+      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD:-guest}
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - hikvision-network
+
+networks:
+  hikvision-network:
+    driver: bridge
+
+volumes:
+  rabbitmq-data:
