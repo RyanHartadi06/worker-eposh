@@ -31,11 +31,5 @@ COPY worker_pubsub.py .
 COPY worker.py .
 COPY config.py .
 
-# Copy and run model download script if InsightFace is enabled
-COPY download_models.py .
-RUN if [ "$INSTALL_INSIGHTFACE" = "true" ]; then \
-        python download_models.py; \
-    fi
-
 # Run worker pub/sub
 CMD ["python", "worker_pubsub.py"]

@@ -32,12 +32,6 @@ COPY config.py .
 COPY rabbitmq.py .
 COPY worker.py .
 
-# Copy and run model download script if InsightFace is enabled
-COPY download_models.py .
-RUN if [ "$INSTALL_INSIGHTFACE" = "true" ]; then \
-        python download_models.py; \
-    fi
-
 # Expose Flask port
 EXPOSE 5000
 
