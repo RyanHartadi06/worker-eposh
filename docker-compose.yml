@@ -45,8 +45,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.worker
-      args:
-        INSTALL_INSIGHTFACE: "true"
     container_name: hikvision-worker-pubsub
     environment:
       - RABBITMQ_HOST=rabbitmq
